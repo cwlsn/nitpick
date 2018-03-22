@@ -1,4 +1,8 @@
-# nitpick
+<h1 align="center">
+	<br>
+	<img width="500" src="https://user-images.githubusercontent.com/10063864/37803938-1fa67e1e-2e08-11e8-8ca2-bd0f2e064bce.png" alt="nitpick">
+	<br>
+</h1>
 
 [![Generated with nod](https://img.shields.io/badge/generator-nod-2196F3.svg?style=flat-square)](https://github.com/diegohaz/nod)
 [![NPM version](https://img.shields.io/npm/v/nitpick.svg?style=flat-square)](https://npmjs.org/package/nitpick)
@@ -8,15 +12,13 @@ A command line tool to make you feel bad about how you set up your app.
 
 ## Install
 
-    $ npm install --save nitpick
+    $ npm i -g nitpick
 
 ## Usage
 
-```js
-import myModule from 'nitpick'
+In your project's root directory, simply run:
 
-myModule()
-```
+	$ nitpick
 
 ## API
 
