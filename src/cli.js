@@ -22,7 +22,7 @@ const checklist = [
 		package: false,
 	},
 	{
-		name: '.gitisgnore',
+		name: '.gitignore',
 		prettyName: 'Git Ignore settings',
 		aliases: [],
 		errors: [],
