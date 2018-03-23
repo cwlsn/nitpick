@@ -1,27 +1,28 @@
 {
-  "parser": "babel-eslint",
-  "extends": [
-    "airbnb-base",
-    "prettier",
-    "plugin:flowtype/recommended"
-  ],
-  "plugins": [
-    "prettier",
-    "flowtype",
-    "flowtype-errors"
-  ],
-  "env": {
-    "jest": true
-  },
-  "rules": {
-    "flowtype-errors/show-warnings": 1,
-    "prettier/prettier": [
-      "error",
-      {
-        "singleQuote": true,
-        "semi": false,
-        "trailingComma": "all"
-      }
-    ]
-  }
+	"parser": "babel-eslint",
+	"extends": [
+		"airbnb-base",
+		"prettier",
+		"plugin:flowtype/recommended"
+	],
+	"plugins": [
+		"prettier",
+		"flowtype",
+		"flowtype-errors"
+	],
+	"env": {
+		"jest": true
+	},
+	"rules": {
+		"flowtype-errors/show-warnings": 1,
+		"prettier/prettier": [
+			"error",
+			{
+				"singleQuote": true,
+				"semi": false,
+				"trailingComma": "all",
+				"useTabs": true
+			}
+		]
+	}
 }
