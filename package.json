@@ -19,7 +19,6 @@
 	"nitpick": {
 		"ignore": []
 	},
-	"cats": "big floof",
 	"files": [
 		"dist",
 		"index.js"
@@ -30,9 +29,8 @@
 		"postcoverage": "opn coverage/lcov-report/index.html",
 		"lint": "eslint src test",
 		"flow": "flow check",
-		"docs": "documentation readme src --section=API",
 		"clean": "rimraf dist",
-		"prebuild": "npm run docs && npm run clean",
+		"prebuild": "npm run clean",
 		"build": "babel src -d dist",
 		"watch": "npm-watch",
 		"patch": "npm version patch && npm publish",

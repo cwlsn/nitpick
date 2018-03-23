@@ -13,13 +13,15 @@ const checklist = [
 		aliases: [],
 		errors: [],
 		package: false,
+		fix: chalk`From your project's root, run: {yellow $ npm init -y}`,
 	},
 	{
 		name: 'README.md',
 		prettyName: 'Readme file',
-		aliases: [],
+		aliases: ['readme.md', 'README'],
 		errors: [],
 		package: false,
+		fix: chalk`From your project's root, run: {yellow $ touch README.md} and edit`,
 	},
 	{
 		name: '.gitignore',
@@ -27,6 +29,7 @@ const checklist = [
 		aliases: [],
 		errors: [],
 		package: false,
+		fix: chalk`From your project's root, run: {yellow $ touch .gitignore}. Make sure to include things like {cyan /node_modules/!}`,
 	},
 	{
 		name: '.editorconfig',
@@ -34,6 +37,7 @@ const checklist = [
 		aliases: [],
 		errors: [],
 		package: false,
+		fix: chalk`From your project's root, run: {yellow $ touch .editorconfig}. Here is a recommended file: {cyan https://gist.github.com/cwlsn/8cd6ba2f536176a2d35df2fcb860a4ab}`,
 	},
 	{
 		name: '.eslintrc',
@@ -42,6 +46,7 @@ const checklist = [
 		errors: [],
 		package: true,
 		packageKey: 'eslint',
+		fix: chalk`From your project's root, run: {yellow $ touch .eslintrc}. Info on ESLint is here: {cyan https://eslint.org}`,
 	},
 	{
 		name: '.eslintignore',
@@ -49,14 +54,16 @@ const checklist = [
 		aliases: ['.eslintignore.json', '.eslintignore.yml'],
 		errors: [],
 		package: false,
+		fix: chalk`From your project's root, run: {yellow $ touch .eslintignore}. Info on ESLint is here: {cyan https://eslint.org}`,
 	},
 	{
 		name: '.babelrc',
 		prettyName: 'Babel config',
-		aliases: ['babelrc.json', 'babelrc.yml'],
+		aliases: ['.babelrc.json', '.babelrc.yml'],
 		errors: [],
 		package: true,
 		packageKey: 'babel',
+		fix: chalk`From your project's root, run: {yellow $ touch .babelrc}. Info on Babel is here: {cyan https://babeljs.io}`,
 	},
 	{
 		name: '.travis.yml',
@@ -64,14 +71,16 @@ const checklist = [
 		aliases: [],
 		errors: [],
 		package: false,
+		fix: chalk`Travis CI requires GitHub integration. See if it's right for you here {cyan https://travis-ci.org/}`,
 	},
 	{
 		name: 'LICENSE',
 		prettyName: 'License information',
-		aliases: ['License.md', 'license.md', 'LICENSE.md'],
+		aliases: ['license.md', 'LICENSE.md'],
 		errors: [],
 		package: true,
 		packageKey: 'license',
+		fix: chalk`It's recommended to include a license, even if you are unsure of which one (try MIT in that case). Light reading: {cyan https://en.wikipedia.org/wiki/Software_license}`,
 	},
 ]
 
@@ -117,19 +126,39 @@ filteredChecklist.forEach(requirement => {
 })
 
 // This is printed when you --help
-const cli = meow(chalk`
+const cli = meow(
+	chalk`
 	{bold.yellow nitpick}
 	 {green └─Just run this in your projects root!}
 	  Options
 		--quiet, -q
 		  └─will only output errors
+		--explain, -e
+		  └─provide an explanation to errors, not compatible with --quiet
 		--disable-colors, -d
 		  └─disable pretty colors, pls no
-`)
+	`,
+	{
+		flags: {
+			quiet: {
+				type: 'boolean',
+				alias: 'q',
+			},
+			explain: {
+				type: 'boolean',
+				alias: 'e',
+			},
+			disableColors: {
+				type: 'boolean',
+				alias: 'd',
+			},
+		},
+	},
+)
 
 // address flags
-const quiet = cli.flags.quiet || cli.flags.q
-if (cli.flags['disable-colors'] || cli.flags.d) {
+const { quiet, explain } = cli.flags
+if (cli.flags.disableColors) {
 	chalk.enabled = false
 }
 
@@ -148,7 +177,8 @@ const output = filteredChecklist
 			}
 			overallErrors += 1
 			return chalk`{bold.red Found issues with ${requirement.prettyName}:}
-${requirement.errors.map(error => chalk.red(`└─${error}`)).join('\n')}`
+${requirement.errors.map(error => chalk.red(`└─${error}`)).join('\n')}
+${explain ? `└─${requirement.fix}` : ''}`
 		}
 		overallSuccesses += 1
 		return chalk`{bold.green Found no issues with ${requirement.prettyName}!}`
