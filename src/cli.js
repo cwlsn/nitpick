@@ -22,7 +22,7 @@ const checklist = [
 		package: false,
 	},
 	{
-		name: '.gitignore',
+		name: '.gitisgnore',
 		prettyName: 'Git Ignore settings',
 		aliases: [],
 		errors: [],
@@ -66,9 +66,9 @@ const checklist = [
 		package: false,
 	},
 	{
-		name: 'LICENSE.md',
+		name: 'LICENSE',
 		prettyName: 'License information',
-		aliases: ['License.md', 'license.md', 'LICENSE'],
+		aliases: ['License.md', 'license.md', 'LICENSE.md'],
 		errors: [],
 		package: true,
 		packageKey: 'license',
@@ -90,8 +90,9 @@ if (ignorable.length) {
 }
 
 // filter the ignorable things
-const filteredChecklist = checklist
-	.filter(requirement => ignorable.indexOf(requirement.name) === -1)
+const filteredChecklist = checklist.filter(
+	requirement => ignorable.indexOf(requirement.name) === -1,
+)
 
 // run through checklist
 filteredChecklist.forEach(requirement => {
@@ -99,38 +100,99 @@ filteredChecklist.forEach(requirement => {
 		requirement.errors.push('File not found')
 		if (requirement.package) {
 			if (packageData && !(requirement.packageKey in packageData)) {
-				requirement.errors.push(`Could not find key "${requirement.packageKey}" in package.json`)
+				requirement.errors.push(
+					`Could not find key "${requirement.packageKey}" in package.json`,
+				)
 			}
 		}
 		if (requirement.aliases.length) {
-			const foundInAliases = requirement.aliases
-				.filter(alias => fs.existsSync(alias))
+			const foundInAliases = requirement.aliases.filter(alias =>
+				fs.existsSync(alias),
+			)
 			if (!foundInAliases.length) {
-				requirement.errors.push('File not found, no aliases for file found')
+				requirement.errors.push('No known aliases for file found')
 			}
 		}
 	}
-
 })
 
 // This is printed when you --help
 const cli = meow(chalk`
-	{bold.yellow nitpick 🙈}
-		{green Just run this in your projects root!}
+	{bold.yellow nitpick}
+	 {green └─Just run this in your projects root!}
+	  Options
+		--quiet, -q
+		  └─will only output errors
+		--disable-colors, -d
+		  └─disable pretty colors, pls no
 `)
+
+// address flags
+const quiet = cli.flags.quiet || cli.flags.q
+if (cli.flags['disable-colors'] || cli.flags.d) {
+	chalk.enabled = false
+}
+
+let overallSuccesses = 0
+let overallErrors = 0
 
 const output = filteredChecklist
 	.map(requirement => {
-		let response = ''
 		if (requirement.errors.length) {
-			response = chalk`{bold.red Found issues with ${requirement.prettyName}:}
+			if (quiet) {
+				throw new Error(
+					`Encountered error in ${
+						requirement.prettyName
+					}, please run without quiet flag for more info.`,
+				)
+			}
+			overallErrors += 1
+			return chalk`{bold.red Found issues with ${requirement.prettyName}:}
 ${requirement.errors.map(error => chalk.red(`└─${error}`)).join('\n')}`
-		} else {
-			response = chalk`{bold.green Found no issues with ${requirement.prettyName}!}`
 		}
-
-		return response
+		overallSuccesses += 1
+		return chalk`{bold.green Found no issues with ${requirement.prettyName}!}`
 	})
 	.join('\n')
+	.trim()
 
-console.log(output)
+if (output.length && !quiet) {
+	console.log(output)
+}
+
+const healthBarMultiplier = 8
+const percentHealth = Math.round(
+	overallSuccesses / (overallSuccesses + overallErrors) * 100,
+)
+const healthBar =
+	chalk.bold.green('+'.repeat(overallSuccesses * healthBarMultiplier)) +
+	chalk.bold.red('-'.repeat(overallErrors * healthBarMultiplier))
+
+const random = array => array[Math.floor(Math.random() * array.length)]
+
+const slams = [
+	`that's decent for a beginner.`,
+	'which is probably fine, probably.',
+	'what are you doing about this?',
+	`C'MON MAN`,
+	'stop trying to swim upstream you salmon.',
+]
+
+const rewards = [
+	'nice one!',
+	'WOW!!1',
+	'I am proud of you.',
+	'you are destined for greatness!',
+	'go get yourself a cookie AND a gold star!',
+]
+
+const potentialSlam = percentHealth === 100 ? random(rewards) : random(slams)
+
+if (!quiet) {
+	console.log('\n')
+	console.log(healthBar)
+	console.log(
+		chalk` Your project scored {cyan.bold ${percentHealth}%}, {bold ${potentialSlam}}`,
+	)
+	console.log(healthBar)
+}

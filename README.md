@@ -18,7 +18,7 @@ A command line tool to make you feel bad about how you set up your app.
 
 In your project's root directory, simply run:
 
-	$ nitpick
+    $ nitpick
 
 ## API
 
