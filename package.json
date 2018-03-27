@@ -1,6 +1,6 @@
 {
 	"name": "nitpick",
-	"version": "0.3.0",
+	"version": "0.4.0",
 	"description": "A command line tool to make you feel bad about how you set up your JavaScript app. 🙈",
 	"license": "MIT",
 	"repository": "cwlsn/nitpick",
